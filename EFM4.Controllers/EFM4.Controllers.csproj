@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EFM4.Models\EFM4.Models.csproj" />
+    <ProjectReference Include="..\EFM4.Views\EFM4.Views.csproj" />
+  </ItemGroup>
+
+</Project>
