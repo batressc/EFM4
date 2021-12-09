@@ -12,6 +12,7 @@ namespace EFM4.Controllers {
         public MDIController() {
             View = new FormMDI();
             View.toolStripMenuItemClients.Click += ToolStripMenuItemClients_Click;
+            View.toolStripMenuItemProducts.Click += ToolStripMenuItemProducts_Click;
         }
 
         /// <summary>
@@ -29,6 +30,14 @@ namespace EFM4.Controllers {
         private void ToolStripMenuItemClients_Click(object? sender, EventArgs e) {
             ClientController clientController = new ClientController();
             ShowInsideMDI(clientController.View);
+        }
+
+        /// <summary>
+        /// Lanza el mantenimiento de productos
+        /// </summary>
+        private void ToolStripMenuItemProducts_Click(object? sender, EventArgs e) {
+            ProductController productController = new ProductController();
+            ShowInsideMDI(productController.View);
         }
     }
 }

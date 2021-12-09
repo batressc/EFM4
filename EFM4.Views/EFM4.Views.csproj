@@ -10,4 +10,16 @@
     <ProjectReference Include="..\EFM4.Models\EFM4.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="FormClientDialog - Copia.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormProduct.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormProductDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

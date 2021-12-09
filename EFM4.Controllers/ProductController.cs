@@ -7,16 +7,16 @@ using System.Windows.Forms;
 
 namespace EFM4.Controllers {
     /// <summary>
-    /// Controlador del mantenimiento de Clientes
+    /// Controlador del mantenimiento de productos
     /// </summary>
-    public class ClientController {
-        private readonly DaoClient _dao;
+    public class ProductController {
+        private readonly DaoProduct _dao;
 
-        public FormClient View { get; set; }
+        public FormProduct View { get; set; }
 
-        public ClientController() {
-            _dao = new DaoClient();
-            View = new FormClient();
+        public ProductController() {
+            _dao = new DaoProduct();
+            View = new FormProduct();
             View.Shown += View_Shown;
             View.buttonRefresh.Click += ButtonRefresh_Click;
             View.buttonAdd.Click += ButtonAdd_Click;
@@ -25,44 +25,44 @@ namespace EFM4.Controllers {
         }
 
         /// <summary>
-        /// Permite recargar los datos de los clientes
+        /// Permite recargar los datos de los productos
         /// </summary>
-        private void LoadClients() {
-            List<Client> clients = _dao.GetAll();
-            View.dataGridViewClients.DataSource = clients;
+        private void LoadProducts() {
+            List<Product> products = _dao.GetAll();
+            View.dataGridViewClients.DataSource = products;
         }
 
         /// <summary>
         /// Carga los datos existentes al iniciar la ventana
         /// </summary>
         private void View_Shown(object? sender, EventArgs e) {
-            LoadClients();
+            LoadProducts();
         }
 
         /// <summary>
         /// Acción de recargar datos
         /// </summary>
         private void ButtonRefresh_Click(object? sender, EventArgs e) {
-            LoadClients();
+            LoadProducts();
         }
 
         /// <summary>
         /// Acción para agregar un nuevo registro
         /// </summary>
         private void ButtonAdd_Click(object? sender, EventArgs e) {
-            ClientDialogController dialogController = new ClientDialogController();
+            ProductDialogController dialogController = new ProductDialogController();
             DialogResult dialogResult = dialogController.View.ShowDialog();
             if (dialogResult != DialogResult.OK) return;
             try {
                 if (_dao.Insert(dialogController.View.Data)) {
-                    View.ShowMessage("Cliente agregado exitosamente", MessageType.INFORMATION);
-                    LoadClients();
+                    View.ShowMessage("Producto agregado exitosamente", MessageType.INFORMATION);
+                    LoadProducts();
                 } else {
-                    View.ShowMessage("No se pudo agregar el nuevo cliente. Favor intente nuevamente", MessageType.WARNING);
+                    View.ShowMessage("No se pudo agregar el nuevo producto. Favor intente nuevamente", MessageType.WARNING);
                 }
             } catch (Exception ex) {
                 _ = ex;
-                View.ShowMessage("Ha ocurrido un error inesperado al tratar de agregar un nuevo cliente. Favor intente nuevamente", MessageType.ERROR);
+                View.ShowMessage("Ha ocurrido un error inesperado al tratar de agregar un nuevo producto. Favor intente nuevamente", MessageType.ERROR);
             }
         }
 
@@ -71,23 +71,24 @@ namespace EFM4.Controllers {
         /// </summary>
         private void ButtonEdit_Click(object? sender, EventArgs e) {
             if (View.dataGridViewClients.CurrentRow != null && 
-                View.dataGridViewClients.CurrentRow.Cells[0].Value is int id &&
+                View.dataGridViewClients.CurrentRow.Cells[0].Value is string id &&
                 View.dataGridViewClients.CurrentRow.Cells[1].Value is string name &&
-                View.dataGridViewClients.CurrentRow.Cells[2].Value is string surname) {
-                Client data = new Client(id, name, surname);
-                ClientDialogController dialogController = new ClientDialogController(data);
+                View.dataGridViewClients.CurrentRow.Cells[2].Value is string category &&
+                View.dataGridViewClients.CurrentRow.Cells[3].Value is decimal unitPrice) {
+                Product data = new Product(id, name, category, unitPrice);
+                ProductDialogController dialogController = new ProductDialogController(data);
                 DialogResult dialogResult = dialogController.View.ShowDialog();
                 if (dialogResult != DialogResult.OK) return;
                 try {
                     if (_dao.Update(dialogController.View.Data)) {
-                        View.ShowMessage("Cliente actualizado exitosamente", MessageType.INFORMATION);
-                        LoadClients();
+                        View.ShowMessage("Producto actualizado exitosamente", MessageType.INFORMATION);
+                        LoadProducts();
                     } else {
-                        View.ShowMessage("No se pudo editar el cliente seleccionado. Favor intente nuevamente", MessageType.WARNING);
+                        View.ShowMessage("No se pudo editar el producto seleccionado. Favor intente nuevamente", MessageType.WARNING);
                     }
                 } catch (Exception ex) {
                     _ = ex;
-                    View.ShowMessage("Ha ocurrido un error inesperado al tratar de actualizar el cliente seleccionado. Favor intente nuevamente", MessageType.ERROR);
+                    View.ShowMessage("Ha ocurrido un error inesperado al tratar de actualizar el producto seleccionado. Favor intente nuevamente", MessageType.ERROR);
                 }
             }
         }
@@ -97,17 +98,17 @@ namespace EFM4.Controllers {
         /// </summary>
         private void ButtonDelete_Click(object? sender, EventArgs e) {
             if (View.dataGridViewClients.CurrentRow != null &&
-                View.dataGridViewClients.CurrentRow.Cells[0].Value is int id) {
+                View.dataGridViewClients.CurrentRow.Cells[0].Value is string id) {
                 try {
                     if (_dao.Delete(id)) {
-                        View.ShowMessage("Cliente eliminado exitosamente", MessageType.INFORMATION);
-                        LoadClients();
+                        View.ShowMessage("Producto eliminado exitosamente", MessageType.INFORMATION);
+                        LoadProducts();
                     } else {
-                        View.ShowMessage("No se pudo eliminar el cliente seleccionado. Favor intente nuevamente", MessageType.WARNING);
+                        View.ShowMessage("No se pudo eliminar el producto seleccionado. Favor intente nuevamente", MessageType.WARNING);
                     }
                 } catch (Exception ex) {
                     _ = ex;
-                    View.ShowMessage("Ha ocurrido un error inesperado al tratar de actualizar el cliente seleccionado. Favor intente nuevamente", MessageType.ERROR);
+                    View.ShowMessage("Ha ocurrido un error inesperado al tratar de actualizar el producto seleccionado. Favor intente nuevamente", MessageType.ERROR);
                 }
             }
         }

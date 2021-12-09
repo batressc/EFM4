@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -10,7 +11,17 @@ namespace EFM4.Models.Domain {
         private readonly SqlConnection _connection;
 
         public DatabaseOperations() {
-            _connection = new SqlConnection("Data Source=(localdb)\\ProjectModels;Initial Catalog=EFM4;User ID=sa;Password=<<ownPassword>>");
+            _connection = new SqlConnection("Data Source=<<databaseHost>>;Initial Catalog=EFM4;User ID=sa;Password=<<databasePassword>>");
+        }
+
+        /// <summary>
+        /// Permite cerrar la conexión de base de datos
+        /// </summary>
+        /// <param name="connection">Objeto de conexión de base de datos</param>
+        private void CloseConnection(SqlConnection connection) {
+            if (connection.State == ConnectionState.Open) {
+                connection.Close();
+            }
         }
 
         /// <summary>
@@ -22,24 +33,27 @@ namespace EFM4.Models.Domain {
         public List<object[]> GetData(string query, Dictionary<string, object>? parameters = null) {
             List<object[]> data = new List<object[]>();
             if (!string.IsNullOrWhiteSpace(query)) {
-                _connection.Open();
-                using (SqlCommand command = new SqlCommand(query, _connection)) {
-                    if (parameters != null) {
-                        foreach (KeyValuePair<string, object> parameter in parameters) {
-                            command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                try {
+                    _connection.Open();
+                    using (SqlCommand command = new SqlCommand(query, _connection)) {
+                        if (parameters != null) {
+                            foreach (KeyValuePair<string, object> parameter in parameters) {
+                                command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                            }
+                        }
+                        SqlDataReader dataReader = command.ExecuteReader();
+                        while (dataReader.Read()) {
+                            object[] dataRow = new object[dataReader.FieldCount];
+                            for (int i = 0; i < dataReader.FieldCount; i++) {
+                                dataRow[i] = dataReader[i];
+                            }
+                            data.Add(dataRow);
                         }
                     }
-                    SqlDataReader dataReader = command.ExecuteReader();
-                    while (dataReader.Read()) {
-                        object[] dataRow = new object[dataReader.FieldCount];
-                        for (int i = 0; i < dataReader.FieldCount; i++) {
-                            dataRow[i] = dataReader[i];
-                        }
-                        data.Add(dataRow);
-                    }
-                }
-                if (_connection.State == ConnectionState.Open) {
-                    _connection.Close();
+                    CloseConnection(_connection);
+                } catch (Exception) {
+                    CloseConnection(_connection);
+                    throw;
                 }
             }
             return data;
@@ -54,25 +68,29 @@ namespace EFM4.Models.Domain {
         public object[]? GetFirstOrDefaultData(string query, Dictionary<string, object>? parameters = null) {
             object[]? data = default;
             if (!string.IsNullOrWhiteSpace(query)) {
-                _connection.Open();
-                using (SqlCommand command = new SqlCommand(query, _connection)) {
-                    if (parameters != null) {
-                        foreach (KeyValuePair<string, object> parameter in parameters) {
-                            command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                try {
+                    _connection.Open();
+                    using (SqlCommand command = new SqlCommand(query, _connection)) {
+                        if (parameters != null) {
+                            foreach (KeyValuePair<string, object> parameter in parameters) {
+                                command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                            }
+                        }
+                        SqlDataReader dataReader = command.ExecuteReader();
+                        while (dataReader.Read()) {
+                            data = new object[dataReader.FieldCount];
+                            for (int i = 0; i < dataReader.FieldCount; i++) {
+                                data[i] = dataReader[i];
+                            }
+                            break;
                         }
                     }
-                    SqlDataReader dataReader = command.ExecuteReader();
-                    while (dataReader.Read()) {
-                        data = new object[dataReader.FieldCount];
-                        for (int i = 0; i < dataReader.FieldCount; i++) {
-                            data[i] = dataReader[i];
-                        }
-                        break;
-                    }
+                    CloseConnection(_connection);
+                } catch (Exception) {
+                    CloseConnection(_connection);
+                    throw;
                 }
-                if (_connection.State == ConnectionState.Open) {
-                    _connection.Close();
-                }
+                
             }
             return data;
         }
@@ -86,17 +104,20 @@ namespace EFM4.Models.Domain {
         public bool ExecuteQuery(string sql, Dictionary<string, object>? parameters = null) {
             if (string.IsNullOrWhiteSpace(sql)) return false;
             bool result = false;
-            _connection.Open();
-            using (SqlCommand command = new SqlCommand(sql, _connection)) {
-                if (parameters != null) {
-                    foreach (KeyValuePair<string, object> parameter in parameters) {
-                        command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+            try {
+                _connection.Open();
+                using (SqlCommand command = new SqlCommand(sql, _connection)) {
+                    if (parameters != null) {
+                        foreach (KeyValuePair<string, object> parameter in parameters) {
+                            command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                        }
                     }
+                    result = command.ExecuteNonQuery() > 0;
                 }
-                result = command.ExecuteNonQuery() > 0;
-            }
-            if (_connection.State == ConnectionState.Open) {
-                _connection.Close();
+                CloseConnection(_connection);
+            } catch (Exception) {
+                CloseConnection(_connection);
+                throw;
             }
             return result;
         }

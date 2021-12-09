@@ -26,6 +26,7 @@
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItemClients = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemWindows = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemProducts = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -34,6 +35,7 @@
             this.menuStripMain.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemClients,
+            this.toolStripMenuItemProducts,
             this.toolStripMenuItemWindows});
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.MdiWindowListItem = this.toolStripMenuItemWindows;
@@ -52,6 +54,12 @@
             this.toolStripMenuItemWindows.Name = "toolStripMenuItemWindows";
             this.toolStripMenuItemWindows.Size = new System.Drawing.Size(72, 21);
             this.toolStripMenuItemWindows.Text = "&Ventanas";
+            // 
+            // toolStripMenuItemProducts
+            // 
+            this.toolStripMenuItemProducts.Name = "toolStripMenuItemProducts";
+            this.toolStripMenuItemProducts.Size = new System.Drawing.Size(79, 21);
+            this.toolStripMenuItemProducts.Text = "&Productos";
             // 
             // FormMDI
             // 
@@ -77,5 +85,6 @@
         private System.Windows.Forms.MenuStrip menuStripMain;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemWindows;
         public System.Windows.Forms.ToolStripMenuItem toolStripMenuItemClients;
+        public System.Windows.Forms.ToolStripMenuItem toolStripMenuItemProducts;
     }
 }
